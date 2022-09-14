@@ -19,6 +19,8 @@ def load_csv_data(data_path, train_path):
     all_data = pd.read_csv(data_path).drop(['Unnamed: 0'], axis=1).drop_duplicates(subset=['cv_id', 'jd_id'], keep='first').reset_index(drop=True)
     train_id = pd.read_pickle(train_path)
     df = all_data.join(train_id.set_index(['cv_id', 'jd_id']), on=['cv_id', 'jd_id'], how='inner')
+    # 用来拼接lsa向量
+    df.to_pickle('../generalization_data/train_data_lsa_cvjd_54339.pkl')
     return df
 
 def col_jieba_fun(series, col_name):
@@ -191,16 +193,16 @@ if __name__ == "__main__":
     tfidf_lsa1 = get_tfidf_lsa_from_text_cols(data_path, train_path, col_name_list1, dimension=30)
     tfidf_lsa1.to_pickle('../generalization_data/train_title_category_tags_tfidf_lsa.pkl')
 
-    tfidf_lsa2 = get_tfidf_lsa_from_text_cols(data_path, train_path, col_name_list2, dimension=70)
-    tfidf_lsa2.to_pickle('../generalization_data/train_description_tfidf_lsa.pkl')
+    # tfidf_lsa2 = get_tfidf_lsa_from_text_cols(data_path, train_path, col_name_list2, dimension=70)
+    # tfidf_lsa2.to_pickle('../generalization_data/train_description_tfidf_lsa.pkl')
 
-    tfidf_lsa3 = get_tfidf_lsa_from_text_cols(data_path, train_path, col_name_list3, dimension=70)
-    tfidf_lsa3.to_pickle('../generalization_data/train_requirement_tfidf_lsa.pkl')
+    # tfidf_lsa3 = get_tfidf_lsa_from_text_cols(data_path, train_path, col_name_list3, dimension=70)
+    # tfidf_lsa3.to_pickle('../generalization_data/train_requirement_tfidf_lsa.pkl')
 
-    tfidf_lsa4 = get_tfidf_lsa_from_text_cols(data_path, train_path, col_name_list4, dimension=40)
-    tfidf_lsa4.to_pickle('../generalization_data/train_position_tfidf_lsa.pkl')
+    # tfidf_lsa4 = get_tfidf_lsa_from_text_cols(data_path, train_path, col_name_list4, dimension=40)
+    # tfidf_lsa4.to_pickle('../generalization_data/train_position_tfidf_lsa.pkl')
 
-    tfidf_lsa5 = get_tfidf_lsa_from_text_cols(data_path, train_path, col_name_list5, dimension=30)
-    tfidf_lsa5.to_pickle('../generalization_data/train_skills_tfidf_lsa.pkl')
+    # tfidf_lsa5 = get_tfidf_lsa_from_text_cols(data_path, train_path, col_name_list5, dimension=30)
+    # tfidf_lsa5.to_pickle('../generalization_data/train_skills_tfidf_lsa.pkl')
     
     print("all is well")
