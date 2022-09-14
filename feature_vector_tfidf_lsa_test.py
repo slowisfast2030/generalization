@@ -120,7 +120,7 @@ def col_merge_fun(series, col_name_jieba_filter_list):
         merge = merge + series[col] + ' '
     return merge.strip(' ')
 
-def get_tfidf_lsa_from_text_cols(data_path, train_path, col_name_list, dimension):
+def get_tfidf_lsa_from_text_cols(data_path, train_path, test_path, col_name_list, dimension):
     '''
     从多个文本列计算tfidf_lsa
 
@@ -130,7 +130,7 @@ def get_tfidf_lsa_from_text_cols(data_path, train_path, col_name_list, dimension
     :returns: tfidf_lsa向量
     '''
     # 读取csv文件
-    df = load_csv_data(data_path, train_path)
+    df = load_csv_data(data_path, train_path, test_path)
     print(df.shape)
 
     # 存储经过分词和过滤后的列名
@@ -180,6 +180,7 @@ if __name__ == "__main__":
 
     data_path = '../data_20220831/raw_cvjd_20220831_spark.csv'
     train_path = '../generalization_data/cvjd_train_filter_54339.pkl'
+    test_path = '../generalization_data/cvjd_test_filter_13586.pkl'
     
     print("\n从文本列获取tfidf_lsa向量\n")
     col_name_list1 = ['title', 'category_name', 'tags']
@@ -190,7 +191,7 @@ if __name__ == "__main__":
     col_name_list5 = ['skills']
     col_name_list6 = ['jobTracks'] # 太吃内存，放弃
    
-    tfidf_lsa1 = get_tfidf_lsa_from_text_cols(data_path, train_path, col_name_list1, dimension=30)
+    tfidf_lsa1 = get_tfidf_lsa_from_text_cols(data_path, train_path, test_path, col_name_list1, dimension=30)
     tfidf_lsa1.to_pickle('../generalization_data/train_title_category_tags_tfidf_lsa.pkl')
 
     # tfidf_lsa2 = get_tfidf_lsa_from_text_cols(data_path, train_path, col_name_list2, dimension=70)

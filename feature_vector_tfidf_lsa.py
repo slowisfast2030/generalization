@@ -6,6 +6,7 @@ import pandas as pd
 from zhconv import convert
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.decomposition import TruncatedSVD
+import pickle
 
 '''
 1.不论是单列文本还是多列文本都可以通过这个函数统一获取tfidf_lsa向量
@@ -94,9 +95,16 @@ def get_tfidf(df, col_name):
     
     vectorizer = TfidfVectorizer()
     vector = vectorizer.fit_transform(text)
+
+    # 作为模型的名字
+    col_name = col_name.strip('_jieba_filter') + '_tfidf_model.pkl'
+    tfidf_pkl_filename = col_name
+    with open(tfidf_pkl_filename, 'wb') as file:
+        pickle.dump(vectorizer, file)
+
     return pd.DataFrame(vector.toarray()), vectorizer
 
-def get_tfidf_lsa(tfidf, n=20):
+def get_tfidf_lsa(tfidf, n, col_name):
     '''
     将tfidf向量降维
     '''
@@ -108,6 +116,13 @@ def get_tfidf_lsa(tfidf, n=20):
 
     # tfidf_pca = pd.DataFrame(tfidf_pca)
     tfidf_lsa = pd.DataFrame(tfidf_lsa)
+    
+    # 作为模型的名字
+    col_name = col_name.strip('_jieba_filter') + '_lsa_model.pkl'
+    lsa_pkl_filename = col_name
+    with open(lsa_pkl_filename, 'wb') as file:
+        pickle.dump(lsa, file)
+
 
     return tfidf_lsa
 
@@ -168,7 +183,7 @@ def get_tfidf_lsa_from_text_cols(data_path, train_path, col_name_list, dimension
     print(tfidf)
 
     # step5 得到tfidf_lsa
-    tfidf_lsa = get_tfidf_lsa(tfidf, dimension)
+    tfidf_lsa = get_tfidf_lsa(tfidf, dimension, merge_col_jieba_filter)
     print("\n=================================={}==================================".format('tfidf_lsa向量'))
     print(tfidf_lsa)
 
@@ -193,16 +208,16 @@ if __name__ == "__main__":
     tfidf_lsa1 = get_tfidf_lsa_from_text_cols(data_path, train_path, col_name_list1, dimension=30)
     tfidf_lsa1.to_pickle('../generalization_data/train_title_category_tags_tfidf_lsa.pkl')
 
-    # tfidf_lsa2 = get_tfidf_lsa_from_text_cols(data_path, train_path, col_name_list2, dimension=70)
-    # tfidf_lsa2.to_pickle('../generalization_data/train_description_tfidf_lsa.pkl')
+    tfidf_lsa2 = get_tfidf_lsa_from_text_cols(data_path, train_path, col_name_list2, dimension=70)
+    tfidf_lsa2.to_pickle('../generalization_data/train_description_tfidf_lsa.pkl')
 
-    # tfidf_lsa3 = get_tfidf_lsa_from_text_cols(data_path, train_path, col_name_list3, dimension=70)
-    # tfidf_lsa3.to_pickle('../generalization_data/train_requirement_tfidf_lsa.pkl')
+    tfidf_lsa3 = get_tfidf_lsa_from_text_cols(data_path, train_path, col_name_list3, dimension=70)
+    tfidf_lsa3.to_pickle('../generalization_data/train_requirement_tfidf_lsa.pkl')
 
-    # tfidf_lsa4 = get_tfidf_lsa_from_text_cols(data_path, train_path, col_name_list4, dimension=40)
-    # tfidf_lsa4.to_pickle('../generalization_data/train_position_tfidf_lsa.pkl')
+    tfidf_lsa4 = get_tfidf_lsa_from_text_cols(data_path, train_path, col_name_list4, dimension=40)
+    tfidf_lsa4.to_pickle('../generalization_data/train_position_tfidf_lsa.pkl')
 
-    # tfidf_lsa5 = get_tfidf_lsa_from_text_cols(data_path, train_path, col_name_list5, dimension=30)
-    # tfidf_lsa5.to_pickle('../generalization_data/train_skills_tfidf_lsa.pkl')
+    tfidf_lsa5 = get_tfidf_lsa_from_text_cols(data_path, train_path, col_name_list5, dimension=30)
+    tfidf_lsa5.to_pickle('../generalization_data/train_skills_tfidf_lsa.pkl')
     
     print("all is well")
