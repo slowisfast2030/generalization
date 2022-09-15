@@ -3,13 +3,13 @@ import numpy as np
 import pandas as pd
 from zhconv import convert
 
-def load_csv_data(data_path, train_path):
+def load_csv_data(data_path, test_path):
     '''
     读取csv文件
     '''
     all_data = pd.read_csv(data_path).drop(['Unnamed: 0'], axis=1).drop_duplicates(subset=['cv_id', 'jd_id'], keep='first').reset_index(drop=True)
-    train_id = pd.read_pickle(train_path)
-    df = all_data.join(train_id.set_index(['cv_id', 'jd_id']), on=['cv_id', 'jd_id'], how='inner')
+    test_id = pd.read_pickle(test_path)
+    df = all_data.join(test_id.set_index(['cv_id', 'jd_id']), on=['cv_id', 'jd_id'], how='inner')
     
     return df
 
@@ -87,11 +87,11 @@ def get_salary_year_cv(series, salary_col):
     # 都没匹配上
     return -1
 
-def get_salary(data_path, train_path):
+def get_salary(data_path, test_path):
     '''
     给定数据路径，得到解析后的currentSalary和desiredSalary
     '''
-    all_data = load_csv_data(data_path, train_path)
+    all_data = load_csv_data(data_path, test_path)
 
     all_data['desiredSalary'].fillna('', inplace=True)
     all_data['currentSalary'].fillna('', inplace=True)
@@ -105,14 +105,14 @@ if __name__ == "__main__":
     print("running...")
 
     data_path = '../data_20220831/raw_cvjd_20220831_spark.csv'
-    train_path = '../generalization_data/cvjd_train_filter_54339.pkl'
+    test_path = '../generalization_data/cvjd_test_filter_13586.pkl'
 
-    all_data = get_salary(data_path, train_path)
+    all_data = get_salary(data_path, test_path)
 
     print(all_data[['desiredSalary', 'currentSalary', 'parsed_desiredSalary', 'parsed_currentSalary']])
     print(all_data[['desiredSalary', 'currentSalary', 'parsed_desiredSalary', 'parsed_currentSalary']].info())
 
-    all_data[['cv_id', 'jd_id', 'parsed_desiredSalary', 'parsed_currentSalary']].to_pickle('../generalization_data/train_salary.pkl')
+    all_data[['cv_id', 'jd_id', 'parsed_desiredSalary', 'parsed_currentSalary']].to_pickle('../generalization_data/test_salary.pkl')
 
     print('all is well')
 
